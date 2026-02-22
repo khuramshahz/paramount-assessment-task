@@ -1,0 +1,358 @@
+{
+  "name": "My workflow 2",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "authentication": "airtableTokenApi",
+        "baseId": {
+          "__rl": true,
+          "value": "appXsMTZORemzCqSA",
+          "mode": "id"
+        },
+        "tableId": {
+          "__rl": true,
+          "value": "tbl1YmHhoE8VfTYm5",
+          "mode": "id"
+        },
+        "triggerField": "=Last Modified At",
+        "additionalFields": {
+          "viewId": ""
+        }
+      },
+      "type": "n8n-nodes-base.airtableTrigger",
+      "typeVersion": 1,
+      "position": [
+        64,
+        -80
+      ],
+      "id": "fc3669b9-cb4f-48d5-9dee-b71b40c81488",
+      "name": "Airtable Trigger",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "PoPJxhG3LaFpFrvH",
+          "name": "Airtable Personal Access Token account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "b9efb4b1-7a15-488a-a1c0-33c7a5a22dfb",
+              "leftValue": "={{ $json.fields[\"Status Categorization\"] }}",
+              "rightValue": "High Value",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "dcbdfffd-1495-4178-90cc-ff990588bfa6",
+              "leftValue": "={{ $json.fields[\"Cleaned Email\"] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "c925d4b6-1c42-4440-a8e1-d6cd6abd001e",
+              "leftValue": "={{ $json.fields[\"Cleaned Email\"] }}",
+              "rightValue": "=^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            },
+            {
+              "id": "962b3c88-427e-41d3-9828-d097dc83b65c",
+              "leftValue": "={{ $json.fields.Tracking }}",
+              "rightValue": "Email Sent",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "ignoreCase": true
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        272,
+        -80
+      ],
+      "id": "e9ecf625-249a-446d-b7cd-8b7f5c9112f5",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "sendTo": "k1h2u3t4@gmail.com",
+        "subject": "New Hire has become \"High Value\"",
+        "message": "={{\n\"I am sharing the details for the new hire:<br><br>\" +\n\"<strong>Full Name:</strong> \" + $json.fields[\"Full Name\"] + \"<br>\" +\n\"<strong>Amount Spent:</strong> $\" + $json.fields[\"Amount Spent on Equipment\"] + \"<br>\" +\n\"<strong>Email:</strong> \" + $json.fields[\"Cleaned Email\"]\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        -176
+      ],
+      "id": "f1bad9ea-9297-4e89-9c72-8caaf8d93155",
+      "name": "Send a message",
+      "webhookId": "8a5849a1-338c-4f05-80d6-1c6510efd8d0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "hmy0mVecJBd4x58E",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appXsMTZORemzCqSA",
+          "mode": "list",
+          "cachedResultName": "Base0",
+          "cachedResultUrl": "https://airtable.com/appXsMTZORemzCqSA"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl1YmHhoE8VfTYm5",
+          "mode": "list",
+          "cachedResultName": "New Hires",
+          "cachedResultUrl": "https://airtable.com/appXsMTZORemzCqSA/tbl1YmHhoE8VfTYm5"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Airtable Trigger').item.json.id }}",
+            "Tracking": "Email Sent"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "First Name",
+              "displayName": "First Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Last Name",
+              "displayName": "Last Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Email Input",
+              "displayName": "Email Input",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Amount Spent on Equipment",
+              "displayName": "Amount Spent on Equipment",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Created Date",
+              "displayName": "Created Date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Full Name",
+              "displayName": "Full Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Cleaned Email",
+              "displayName": "Cleaned Email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Status Categorization",
+              "displayName": "Status Categorization",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Last Modified At",
+              "displayName": "Last Modified At",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Tracking",
+              "displayName": "Tracking",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Email Sent",
+                  "value": "Email Sent"
+                },
+                {
+                  "name": "Email Not Sent",
+                  "value": "Email Not Sent"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        688,
+        -176
+      ],
+      "id": "79a21975-f01c-4f8a-a93c-068f4764cbc0",
+      "name": "Update record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "PoPJxhG3LaFpFrvH",
+          "name": "Airtable Personal Access Token account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Airtable Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Update record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "1e918c7c-d6ec-4de6-906d-2263f6df0f2f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "66e165a6bd213b44e2846daf752bc4fe33ffdd3d8aa8d400e217b330c06a274e"
+  },
+  "id": "XHTYuvdyxLQ6G96m",
+  "tags": []
+}
